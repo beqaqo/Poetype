@@ -1,11 +1,11 @@
 from flask import Flask
 
 from src.config import Config
-
+from src.views import main_bp
 from src.ext import db, migrate
 from src.commands import init_db, populate_db
 
-BLUEPRINTS = []
+BLUEPRINTS = [main_bp]
 COMMANDS = [init_db, populate_db]
 
 def create_app():
