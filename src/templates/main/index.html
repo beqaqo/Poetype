@@ -1,9 +1,18 @@
 {% extends 'layout/base.html' %}
 
 {% block title %}
-    Poetype
+Poetype
 {% endblock %}
-
 {% block body %}
-
+<div class="text-center">
+    <h1 class="font font_largexl font_color p">ილია ჭავჭავაძე</h1>
+    <h2 class="font font_between font_color p-2">ჩამო კალამო</h2>
+    <div id="header">
+        <div id="info"></div>
+    </div>
+    <div id="game" tabindex="0"><div id="words">{{poem|safe}}</div>
+        <div id="cursor"></div>
+        <div id="focus-error">აქ დააჭირე რომ გააგრძელო</div>
+    </div>
+</div>
 {% endblock %}

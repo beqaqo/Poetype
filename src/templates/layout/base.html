@@ -8,22 +8,111 @@
 
     <title>
         {% block title %}
-            Poetype
+        Poetype
         {% endblock %}
     </title>
 
-    <stype>
-        html, body {
-            height: 100%;
+    <style>
+        :root {
+            --font-color: #414141;
+            --font-color-faded: #777777;
+            --font-color-highlight: #9e413f;
+            --background-color: #d9d9d9;
         }
-    </stype>
-</head>
-<body class="white">
-{% include 'layout/navbar.html' %}
-{% block body %}
-{% endblock %}
-{% include 'layout/footer.html' %}
 
+
+        .background {
+            background-color: var(--background-color);
+        }
+
+        .font_color {
+            color: var(--font-color);
+        }
+
+        .font_color_faded {
+            color: var(--font-color-faded);
+        }
+
+        .highlight {
+            color: var(--font-color-highlight);
+        }
+
+        .font {
+            font-family: "Roboto", sans-serif;
+        }
+
+        .font_largexl {
+            font-size: 4rem;
+            font-weight: bold;
+        }
+
+        .font_large {
+            font-size: 4rem;
+            font-weight: bold;
+        }
+
+        .font_between {
+            font-size: 2rem;
+        }
+
+        .font_medium {
+            font-size: 2rem;
+        }
+
+        .letter {
+        }
+
+        .letter.correct{
+            color: var(--font-color);
+        }
+
+        .letter.incorrect{
+            color: var(--font-color-highlight);)
+        }
+
+        div#game {
+            font-size: 2rem;
+            white-space: pre;
+            line-height: 50px;
+            height: 200px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        #game:focus #words {
+            filter: blur(0px)
+        }
+
+        div#words {
+            filter: blur(4px);
+            color: var(--font-color-faded);
+        }
+
+        #focus-error {
+            position: absolute;
+            inset: 0;
+            text-align: center;
+            padding-top: 75px;
+        }
+
+        #game:focus #focus-error {
+            display: none;
+        }
+    </style>
+
+    <script>
+        document.getElementById("game").addEventListener("keyup", event => {
+            const key = event.key;
+        })
+    </script>
+</head>
+<body class="background">
+<div>
+    {% include 'layout/navbar.html' %}
+    {% block body %}
+    {% endblock %}
+    {% include 'layout/footer.html' %}
+</div>
 <div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
             integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
