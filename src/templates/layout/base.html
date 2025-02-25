@@ -94,6 +94,11 @@
             filter: blur(0px)
         }
 
+        #game.over #words {
+            filter: blur(0px);
+            opacity: 0.5;
+        }
+
 
         #focus-error {
             position: absolute;
@@ -105,6 +110,11 @@
         #game:focus #focus-error {
             display: none;
         }
+
+        #game.over #focus-error {
+            display: none;
+        }
+
 
         #time {
         }
@@ -141,6 +151,10 @@
             display: block;
         }
 
+        #game.over:focus #cursor {
+            display: none;
+        }
+
     </style>
 
     <script>
@@ -165,6 +179,21 @@
             document.getElementById('cursor').style.left = document.querySelector('.letter.current').getBoundingClientRect().left + 'px';
         }
 
+        function gameOver() {
+            if (!document.getElementById('game').classList.contains("over")) {
+                clearInterval(window.timer);
+                addClass(document.getElementById('game'), 'over');
+                document.getElementById("time").innerHTML = `წუთში ${getWPM()} სიტყვა`;
+            }
+        }
+
+        function getWPM() {
+            let count = parseInt(document.getElementById("words").dataset.count) || 0;
+            let time = parseFloat(document.getElementById("time").textContent.replace(/[^0-9.]/g, '')) || 1; // Extracts numeric value
+
+            return Math.round((count / time) * 60);
+        }
+
         document.addEventListener("DOMContentLoaded", () => {
             document.getElementById("game").addEventListener("keyup", event => {
                 const key = event.key;
@@ -175,18 +204,21 @@
                 const cursor = document.getElementById('cursor');
                 cursor.style.animation = 'none'
                 const words = document.getElementById('words');
-                const gameTime = 30;
 
-                if (!window.timer && isLetter){
+                if (!currentLetter.nextSibling) {
+                    gameOver();
+                    return;
+                }
+
+                if (!window.timer && isLetter) {
                     window.timer = setInterval(() => {
-                        if(!window.gameStart){
+                        if (!window.gameStart) {
                             window.gameStart = (new Date()).getTime();
                         }
                         const currentTime = (new Date()).getTime();
                         const msPassed = currentTime - window.gameStart;
-                        const sPassed = Math.round(msPassed/1000);
-                        const sLeft = gameTime - sPassed;
-                        document.getElementById("time").innerHTML = `${sLeft}`;
+                        const sPassed = Math.round(msPassed / 1000);
+                        document.getElementById("time").innerHTML = `${sPassed + 1}`;
                     }, 1000);
                 }
                 if (isLetter && currentLetter) {
@@ -206,9 +238,6 @@
                 }
                 console.log({key, expectedLetter});
 
-
-                console.log(currentLetter.getBoundingClientRect().top)
-                console.log(words.getBoundingClientRect().top)
                 //move lines up
                 if (currentLetter.getBoundingClientRect().top > 270) {
                     const margin = parseInt(words.style.marginTop || '0px')

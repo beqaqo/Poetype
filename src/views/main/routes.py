@@ -22,6 +22,8 @@ poem = """ჩემო კალამო, ჩემო კარგო, რა�
 ბრიყვნი ამბობენ, კარგი გული კი მაშინვე სცნობს —
 ამ სიძულვილში რაოდენიც სიყვარულია!"""
 
+words = poem.split()
+
 def format_word(word):
     return "".join(f'<span class="letter">{char}</span>' for char in word)
 
@@ -29,4 +31,4 @@ poem = format_word(poem)
 
 @main_bp.route('/')
 def index():
-    return render_template('index.html', poem=poem)
+    return render_template('index.html', poem=poem, count=len(words))
