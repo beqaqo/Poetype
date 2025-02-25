@@ -75,13 +75,13 @@
         div#game {
             font-size: 2rem;
             white-space: pre;
-            line-height: 50px;
-            height: 210px;
+            line-height: 55px;
+            height: 220px;
             overflow: hidden;
             position: relative;
         }
 
-        div#game:focus{
+        div#game:focus {
             outline: 0;
         }
 
@@ -113,18 +113,19 @@
             display: none;
         }
 
-        @keyframes blink{
-            0%{
+        @keyframes blink {
+            0% {
                 opacity: 1;
             }
-            50%{
+            50% {
                 opacity: 0;
             }
-            100%{
+            100% {
                 opacity: 1;
             }
         }
-        #cursor{
+
+        #cursor {
             display: none;
             width: 4px;
             height: 2.2rem;
@@ -136,13 +137,18 @@
             transition: top 0.1s ease-out, left 0.1s ease-out;
         }
 
-        #game:focus #cursor{
+        #game:focus #cursor {
             display: block;
         }
 
     </style>
 
     <script>
+        window.onload = function () {
+            cursor.style.top = document.querySelector('.letter.current').getBoundingClientRect().top + 'px';
+            cursor.style.left = document.querySelector('.letter.current').getBoundingClientRect().left + 'px';
+        };
+
         function addClass(element, className) {
             element.className += " " + className;
         }
@@ -152,6 +158,8 @@
         }
 
         function newGame() {
+            window.timer = null;
+            window.gameStart = null;
             addClass(document.querySelector('.letter'), 'current');
             document.getElementById('cursor').style.top = document.querySelector('.letter.current').getBoundingClientRect().top + 'px';
             document.getElementById('cursor').style.left = document.querySelector('.letter.current').getBoundingClientRect().left + 'px';
@@ -167,13 +175,26 @@
                 const cursor = document.getElementById('cursor');
                 cursor.style.animation = 'none'
                 const words = document.getElementById('words');
+                const gameTime = 30;
 
-                if(isLetter && currentLetter){
-                    addClass(currentLetter, key===expectedLetter ? "correct" : "incorrect");
+                if (!window.timer && isLetter){
+                    window.timer = setInterval(() => {
+                        if(!window.gameStart){
+                            window.gameStart = (new Date()).getTime();
+                        }
+                        const currentTime = (new Date()).getTime();
+                        const msPassed = currentTime - window.gameStart;
+                        const sPassed = Math.round(msPassed/1000);
+                        const sLeft = gameTime - sPassed;
+                        document.getElementById("time").innerHTML = `${sLeft}`;
+                    }, 1000);
+                }
+                if (isLetter && currentLetter) {
+                    addClass(currentLetter, key === expectedLetter ? "correct" : "incorrect");
                     removeClass(currentLetter, "current");
                     addClass(currentLetter.nextSibling, "current");
                 }
-                if(isBackspace && currentLetter.previousSibling){
+                if (isBackspace && currentLetter.previousSibling) {
                     removeClass(currentLetter, "current");
                     addClass(currentLetter.previousSibling, "current");
                     removeClass(currentLetter.previousSibling, "correct");
@@ -189,13 +210,13 @@
                 console.log(currentLetter.getBoundingClientRect().top)
                 console.log(words.getBoundingClientRect().top)
                 //move lines up
-                if(currentLetter.getBoundingClientRect().top > 270){
+                if (currentLetter.getBoundingClientRect().top > 270) {
                     const margin = parseInt(words.style.marginTop || '0px')
-                    words.style.marginTop = (margin - 52) + 'px';
+                    words.style.marginTop = (margin - 55) + 'px';
                 }
 
                 //move cursor
-                if(isLetter){
+                if (isLetter) {
                     cursor.style.top = currentLetter.getBoundingClientRect().top + 'px';
                     cursor.style.left = currentLetter.getBoundingClientRect().right + 'px';
                 }
@@ -203,7 +224,6 @@
 
             newGame();
         });
-
     </script>
 
 </head>
