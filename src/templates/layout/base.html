@@ -72,6 +72,10 @@
         )
         }
 
+        .modal-content{
+            background-color: var(--background-color);
+        }
+
         div#game {
             font-size: 2rem;
             white-space: pre;
@@ -141,8 +145,8 @@
             height: 2.2rem;
             background-color: var(--font-color);
             position: fixed;
-            top: 275px;
-            left: 415px;
+            top: 1px;
+            left: 1px;
             animation: blink .5s infinite;
             transition: top 0.1s ease-out, left 0.1s ease-out;
         }
@@ -159,8 +163,13 @@
 
     <script>
         window.onload = function () {
-            cursor.style.top = document.querySelector('.letter.current').getBoundingClientRect().top + 'px';
-            cursor.style.left = document.querySelector('.letter.current').getBoundingClientRect().left + 'px';
+            const currentLetter = document.querySelector('.letter.current');
+            const words = document.getElementById('words');
+
+            while (currentLetter.getBoundingClientRect().top > 275) {
+                const margin = parseInt(words.style.marginTop || '0px')
+                words.style.marginTop = (margin - 55) + 'px';
+            }
         };
 
         function addClass(element, className) {
@@ -175,8 +184,8 @@
             window.timer = null;
             window.gameStart = null;
             addClass(document.querySelector('.letter'), 'current');
-            document.getElementById('cursor').style.top = document.querySelector('.letter.current').getBoundingClientRect().top + 'px';
-            document.getElementById('cursor').style.left = document.querySelector('.letter.current').getBoundingClientRect().left + 'px';
+            //document.getElementById('cursor').style.top = document.querySelector('.letter.current').getBoundingClientRect().top + 'px';
+            //document.getElementById('cursor').style.left = document.querySelector('.letter.current').getBoundingClientRect().left + 'px';
         }
 
         function gameOver() {
@@ -239,7 +248,7 @@
                 console.log({key, expectedLetter});
 
                 //move lines up
-                if (currentLetter.getBoundingClientRect().top > 270) {
+                if (currentLetter.getBoundingClientRect().top > 275) {
                     const margin = parseInt(words.style.marginTop || '0px')
                     words.style.marginTop = (margin - 55) + 'px';
                 }

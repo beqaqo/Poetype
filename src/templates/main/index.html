@@ -5,12 +5,42 @@ Poetype
 {% endblock %}
 {% block body %}
 <div class="text-center">
-    <h1 class="font-geo font-xl font-color p-2">ილია ჭავჭავაძე</h1>
-    <h2 class="font-geo font-m font-color p-3">ჩამო კალამო</h2>
-    <div id="header">
-        <div id="info"></div>
+    <button id="author" type="button" class="btn font-geo font-xl font-color p-2" data-bs-toggle="modal"
+            data-bs-target="#authorModal">ილია ჭავჭავაძე
+    </button>
+    <div class="modal fade" id="authorModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <ul class="list-group">
+                    <li class="list-group-item btn font-geo font-m font-color p-2">ილია ჭავჭავაძე</li>
+                    <li class="list-group-item btn font-geo font-m font-color p-2">აკაკი წერერთელი</li>
+                    <li class="list-group-item btn font-geo font-m font-color p-2">ნიკო გომელაური</li>
+                    <li class="list-group-item btn font-geo font-m font-color p-2">იაკობ გოგებაშვილი</li>
+                    <li class="list-group-item btn font-geo font-m font-color p-2">გალაკტიონ ტაბიძე</li>
+                </ul>
+            </div>
+        </div>
     </div>
-    <div id="game" class="font-geo p-2" tabindex="0"><div id="words" data-count="{{count}}">{{poem|safe}}</div>
+    <div>
+        <button id="poem" type="button" class="btn font-geo font-m font-color p-3" data-bs-toggle="modal"
+                data-bs-target="#poemModal">ჩამო კალამო
+        </button>
+    </div>
+    <div class="modal fade" id="poemModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <ul class="list-group">
+                    <li class="list-group-item btn font-geo font-m font-color p-2">ჩემო კალამო</li>
+                    <li class="list-group-item btn font-geo font-m font-color p-2">უსიყვარულოდ</li>
+                    <li class="list-group-item btn font-geo font-m font-color p-2">ჩვენ ავირჩიეთ ერთხელ ბარაბა</li>
+                    <li class="list-group-item btn font-geo font-m font-color p-2">მემენტო მორი</li>
+                    <li class="list-group-item btn font-geo font-m font-color p-2">ფიქრი მტკვრის პირას</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div id="game" class="font-geo p-2" tabindex="0">
+        <div id="words" data-count="{{count}}">{{poem|safe}}</div>
         <div id="cursor"></div>
         <div id="focus-error" class="font-geo">დააჭირე რომ გააგრძელო</div>
     </div>

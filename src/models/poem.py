@@ -6,4 +6,6 @@ class Poem(db.Model, BaseModel):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
-    body = db.Column(db.String)
+    verse = db.Column(db.String)
+
+    author = db.Colume(db.ForeignKey('author.id'))
