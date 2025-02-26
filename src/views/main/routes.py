@@ -30,6 +30,11 @@ def format_text(poem_text):
     return ''.join(f'<span class="letter">{char}</span>' for char in poem_text)
 
 # Routes
+@main_bp.route('/')
+def this():
+    return index(1,1)
+
+
 @main_bp.route('/<int:author_id>/<int:poem_id>', methods=['GET'])
 def index(author_id, poem_id):
     author_obj = Author.query.get(author_id)
