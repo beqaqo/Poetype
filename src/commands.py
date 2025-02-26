@@ -2,7 +2,7 @@ from flask.cli import with_appcontext
 import click
 
 from src.ext import db
-from src.models import Poem
+from src.models import Poem, Author
 
 @click.command("init_db")
 @with_appcontext

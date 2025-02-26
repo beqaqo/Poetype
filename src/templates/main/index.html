@@ -6,35 +6,27 @@ Poetype
 {% block body %}
 <div class="text-center">
     <button id="author" type="button" class="btn font-geo font-xl font-color p-2" data-bs-toggle="modal"
-            data-bs-target="#authorModal">ილია ჭავჭავაძე
+            data-bs-target="#authorModal">{{author}}
     </button>
     <div class="modal fade" id="authorModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
                 <ul class="list-group">
-                    <li class="list-group-item btn font-geo font-m font-color p-2">ილია ჭავჭავაძე</li>
-                    <li class="list-group-item btn font-geo font-m font-color p-2">აკაკი წერერთელი</li>
-                    <li class="list-group-item btn font-geo font-m font-color p-2">ნიკო გომელაური</li>
-                    <li class="list-group-item btn font-geo font-m font-color p-2">იაკობ გოგებაშვილი</li>
-                    <li class="list-group-item btn font-geo font-m font-color p-2">გალაკტიონ ტაბიძე</li>
+                    {{authors | safe}}
                 </ul>
             </div>
         </div>
     </div>
     <div>
         <button id="poem" type="button" class="btn font-geo font-m font-color p-3" data-bs-toggle="modal"
-                data-bs-target="#poemModal">ჩამო კალამო
+                data-bs-target="#poemModal">{{poem_name}}
         </button>
     </div>
     <div class="modal fade" id="poemModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
                 <ul class="list-group">
-                    <li class="list-group-item btn font-geo font-m font-color p-2">ჩემო კალამო</li>
-                    <li class="list-group-item btn font-geo font-m font-color p-2">უსიყვარულოდ</li>
-                    <li class="list-group-item btn font-geo font-m font-color p-2">ჩვენ ავირჩიეთ ერთხელ ბარაბა</li>
-                    <li class="list-group-item btn font-geo font-m font-color p-2">მემენტო მორი</li>
-                    <li class="list-group-item btn font-geo font-m font-color p-2">ფიქრი მტკვრის პირას</li>
+                    {{poems | safe}}
                 </ul>
             </div>
         </div>

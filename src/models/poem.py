@@ -8,4 +8,5 @@ class Poem(db.Model, BaseModel):
     name = db.Column(db.String)
     verse = db.Column(db.String)
 
-    author = db.Colume(db.ForeignKey('author.id'))
+    author_id = db.Column(db.ForeignKey('author.id'))
+    author = db.relationship('Author', back_populates='poem')
