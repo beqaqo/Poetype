@@ -1,7 +1,6 @@
 from flask import Blueprint, render_template, redirect
 from os import path
 
-
 from src.models import Poem, Author
 from src.config import Config
 
@@ -11,28 +10,43 @@ main_bp = Blueprint('main', __name__, template_folder=TEMPLATES_FOLDER)
 
 
 # Utility functions
-def format_list(author):
+def format_list(model):
     author_id = None
     poem_id = None
 
-    if type(author) == Author:
-        author_id = author.id
-        poems_obj = Poem.query.filter_by(author_id=author.id).all()
+    if type(model) == Author:
+        author_id = model.id
+        poems_obj = Poem.query.filter_by(author_id=model.id).all()
         poem = poems_obj[0]
         poem_id = poem.id
-    if type(author) == Poem:
-        poem_id = author.id
-        author_id = author.author_id
+    if type(model) == Poem:
+        poem_id = model.id
+        author_id = model.author_id
 
-    return f'<li class=""><a class="navbar-brand font-geo font-m font-color" href="/{author_id}/{poem_id}">{author.name}</a></li>'
+    return f'<li class=""><a class="navbar-brand font-geo font-m font-color" href="/{author_id}/{poem_id}">{model.name}</a></li>'
+
 
 def format_text(poem_text):
-    return ''.join(f'<span class="letter">{char}</span>' for char in poem_text)
+    poem_text = poem_text.replace("\n", "")
+    text = ''
+    prev_space = False  # Tracks if the last character was a space
+
+    for char in poem_text:
+        if char == ' ':
+            prev_space = True  # Mark that we encountered a space
+            text += f'<span class="letter">{char}</span>'  # Keep the first space
+        elif prev_space and char == ' ':
+            prev_space = False  # Reset when a non-space character appears
+        else:
+            text += f'<span class="letter">{char}</span>'
+
+    return text
+
 
 # Routes
 @main_bp.route('/')
 def this():
-    return index(1,1)
+    return index(1, 1)
 
 
 @main_bp.route('/<int:author_id>/<int:poem_id>', methods=['GET'])
@@ -55,6 +69,7 @@ def index(author_id, poem_id):
         poem=formatted_poem,
         count=word_count
     )
+
 
 @main_bp.route('/about')
 def about():

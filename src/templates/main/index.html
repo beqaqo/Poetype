@@ -5,26 +5,26 @@ Poetype
 {% endblock %}
 {% block body %}
 <div class="text-center">
-    <button id="author" type="button" class="btn font-geo font-xl font-color p-2" data-bs-toggle="modal"
-            data-bs-target="#authorModal">{{author}}
-    </button>
+    <a id="author" class="navbar-brand font-geo font-xl font-color p-2" data-bs-toggle="modal"
+       data-bs-target="#authorModal" href="">{{author}}
+    </a>
     <div class="modal fade" id="authorModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-            <div class="modal-content">
+            <div class="modal-content p-2">
                 <ul class="list-group">
                     {{authors | safe}}
                 </ul>
             </div>
         </div>
     </div>
-    <div>
-        <button id="poem" type="button" class="btn font-geo font-m font-color p-3" data-bs-toggle="modal"
-                data-bs-target="#poemModal">{{poem_name}}
-        </button>
+    <div class="p-2">
+        <a id="poem" class="navbar-brand font-geo font-m font-color" data-bs-toggle="modal"
+                data-bs-target="#poemModal" href="">{{poem_name}}
+        </a>
     </div>
     <div class="modal fade" id="poemModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-            <div class="modal-content">
+            <div class="modal-content p-2">
                 <ul class="list-group">
                     {{poems | safe}}
                 </ul>

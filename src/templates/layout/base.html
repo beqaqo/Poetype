@@ -14,6 +14,7 @@
     </title>
 
     <style>
+        /* === ROOT VARIABLES === */
         :root {
             --font-color: #414141;
             --font-color-faded: #777777;
@@ -21,11 +22,13 @@
             --background-color: #d9d9d9;
         }
 
-
-        .background {
+        /* === GLOBAL STYLES === */
+        body {
             background-color: var(--background-color);
+            font-family: "Roboto", sans-serif;
         }
 
+        /* === TYPOGRAPHY === */
         .font-color {
             color: var(--font-color);
         }
@@ -36,10 +39,6 @@
 
         .highlight {
             color: var(--font-color-highlight);
-        }
-
-        .font {
-            font-family: "Roboto", sans-serif;
         }
 
         .font-geo {
@@ -60,23 +59,17 @@
             font-size: 1.8rem;
         }
 
-        .letter {
-        }
-
+        /* === LETTER STYLING === */
         .letter.correct {
             color: var(--font-color);
         }
 
         .letter.incorrect {
             color: var(--font-color-highlight);
-        )
         }
 
-        .modal-content{
-            background-color: var(--background-color);
-        }
-
-        div#game {
+        /* === GAME AREA === */
+        #game {
             font-size: 2rem;
             white-space: pre;
             line-height: 55px;
@@ -85,25 +78,26 @@
             position: relative;
         }
 
-        div#game:focus {
+        #game:focus {
             outline: 0;
         }
 
-        div#words {
+        /* === WORD STYLING === */
+        #words {
             filter: blur(4px);
             color: var(--font-color-faded);
         }
 
-        #game:focus #words {
-            filter: blur(0px)
+        #game:focus #words,
+        #game.over #words {
+            filter: blur(0px);
         }
 
         #game.over #words {
-            filter: blur(0px);
             opacity: 0.5;
         }
 
-
+        /* === GAME STATUS MESSAGE === */
         #focus-error {
             position: absolute;
             inset: 0;
@@ -111,31 +105,35 @@
             padding-top: 75px;
         }
 
-        #game:focus #focus-error {
-            display: none;
-        }
-
+        #game:focus #focus-error,
         #game.over #focus-error {
             display: none;
         }
 
-
-        #time {
-        }
-
+        /* === TIMER STYLING === */
         #game:focus #time {
             display: none;
         }
 
+        /* === BUTTON STYLING === */
+        button:focus,
+        button:active {
+            outline: none !important;
+            box-shadow: none !important;
+        }
+
+        /* === MODAL STYLING === */
+        .modal-content {
+            background-color: var(--background-color);
+        }
+
+        /* === BLINKING CURSOR === */
         @keyframes blink {
-            0% {
+            0%, 100% {
                 opacity: 1;
             }
             50% {
                 opacity: 0;
-            }
-            100% {
-                opacity: 1;
             }
         }
 
@@ -158,110 +156,218 @@
         #game.over:focus #cursor {
             display: none;
         }
-
     </style>
 
     <script>
-        window.onload = function () {
-            const currentLetter = document.querySelector('.letter.current');
-            const words = document.getElementById('words');
-
-            while (currentLetter.getBoundingClientRect().top > 275) {
-                const margin = parseInt(words.style.marginTop || '0px')
-                words.style.marginTop = (margin - 55) + 'px';
-            }
+        // Configuration and state management
+        const GameState = {
+            timer: null,
+            gameStart: null,
+            isGameOver: false
         };
 
-        function addClass(element, className) {
-            element.className += " " + className;
+        // List of modifier keys to ignore
+        const IGNORED_KEYS = ['Shift', 'Control', 'Alt', 'Meta', 'CapsLock', 'Tab', 'Escape', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
+
+        const TOP_BORDER = 275;
+        const MOVE_UP = 55;
+
+        // DOM element cache
+        const Elements = {
+            game: null,
+            words: null,
+            time: null,
+            cursor: null
+        };
+
+        // Initialize the game
+        function initGame() {
+            // Cache DOM elements
+            Elements.game = document.getElementById('game');
+            Elements.words = document.getElementById('words');
+            Elements.time = document.getElementById('time');
+            Elements.cursor = document.getElementById('cursor');
+
+            // Set up event listeners
+            Elements.game.addEventListener('keyup', handleKeyPress);
+
+            // Start a new game
+            resetGame();
         }
 
-        function removeClass(element, className) {
-            element.className = element.className.replace(className, '');
+        // Reset game to starting state
+        function resetGame() {
+            GameState.timer = null;
+            GameState.gameStart = null;
+            GameState.isGameOver = false;
+
+            // Reset UI
+            const firstLetter = document.querySelector('.letter');
+            if (firstLetter) {
+                addClassToElement(firstLetter, 'current');
+                // Position cursor at the beginning
+                updateCursorPosition();
+            }
+
+            // Ensure first line is visible
+            alignFirstLineInView();
+
+            // Reset game UI
+            Elements.game.classList.remove('over');
         }
 
-        function newGame() {
-            window.timer = null;
-            window.gameStart = null;
-            addClass(document.querySelector('.letter'), 'current');
-            //document.getElementById('cursor').style.top = document.querySelector('.letter.current').getBoundingClientRect().top + 'px';
-            //document.getElementById('cursor').style.left = document.querySelector('.letter.current').getBoundingClientRect().left + 'px';
+        // Handle key press events
+        function handleKeyPress(event) {
+            if (GameState.isGameOver) return;
+
+            const key = event.key;
+
+            // Ignore modifier keys and special keys
+            if (IGNORED_KEYS.includes(key)) return;
+
+            const currentLetter = document.querySelector('.letter.current');
+
+            // Check if we have a current letter to work with
+            if (!currentLetter) return;
+
+            // Check game end condition
+            if (!currentLetter.nextSibling) {
+                endGame();
+                return;
+            }
+
+            // Handle different key types
+            if (key.length === 1) {
+                handleLetterKey(key, currentLetter);
+            } else if (key === 'Backspace') {
+                handleBackspace(currentLetter);
+            }
+
+            // Update UI after key processing
+            updateCursorPosition();
+            keepCurrentLetterInView();
         }
 
-        function gameOver() {
-            if (!document.getElementById('game').classList.contains("over")) {
-                clearInterval(window.timer);
-                addClass(document.getElementById('game'), 'over');
-                document.getElementById("time").innerHTML = `წუთში ${getWPM()} სიტყვა`;
+        // Handle single letter key presses
+        function handleLetterKey(key, currentLetter) {
+            // Start timer on first key press
+            if (!GameState.timer) {
+                startTimer();
+            }
+
+            const expectedLetter = currentLetter.innerHTML;
+            const isCorrect = key === expectedLetter;
+
+            // Mark current letter as correct/incorrect and move to next
+            addClassToElement(currentLetter, isCorrect ? "correct" : "incorrect");
+            removeClassFromElement(currentLetter, "current");
+
+            if (currentLetter.nextSibling) {
+                addClassToElement(currentLetter.nextSibling, "current");
             }
         }
 
-        function getWPM() {
-            let count = parseInt(document.getElementById("words").dataset.count) || 0;
-            let time = parseFloat(document.getElementById("time").textContent.replace(/[^0-9.]/g, '')) || 1; // Extracts numeric value
+        // Handle backspace key press
+        function handleBackspace(currentLetter) {
+            if (!currentLetter.previousSibling) return;
+            if (currentLetter.previousSibling.getBoundingClientRect().top !== currentLetter.getBoundingClientRect().top) return; //there may be more efficient way to do that
 
+            // Move back to previous letter
+            removeClassFromElement(currentLetter, "current");
+            const previousLetter = currentLetter.previousSibling;
+            addClassToElement(previousLetter, "current");
+
+            // Reset letter state
+            removeClassFromElement(previousLetter, "correct");
+            removeClassFromElement(previousLetter, "incorrect");
+        }
+
+        // Start the game timer
+        function startTimer() {
+            GameState.gameStart = Date.now();
+            GameState.timer = setInterval(() => {
+                const secondsPassed = Math.round((Date.now() - GameState.gameStart) / 1000);
+                Elements.time.textContent = `${secondsPassed + 1}`;
+            }, 1000);
+        }
+
+        // End the game
+        function endGame() {
+            if (GameState.isGameOver) return;
+
+            GameState.isGameOver = true;
+            clearInterval(GameState.timer);
+            addClassToElement(Elements.game, 'over');
+
+            // Display WPM score
+            const wpm = calculateWPM();
+            Elements.time.innerHTML = `წუთში ${wpm} სიტყვა`;
+        }
+
+        // Calculate words per minute
+        function calculateWPM() {
+            const count = parseInt(Elements.words.dataset.count) || 0;
+            const time = parseFloat(Elements.time.textContent.replace(/[^0-9.]/g, '')) || 1;
             return Math.round((count / time) * 60);
         }
 
-        document.addEventListener("DOMContentLoaded", () => {
-            document.getElementById("game").addEventListener("keyup", event => {
-                const key = event.key;
-                const currentLetter = document.querySelector('.letter.current');
-                const expectedLetter = currentLetter.innerHTML;
-                const isLetter = key.length === 1;
-                const isBackspace = key === 'Backspace';
-                const cursor = document.getElementById('cursor');
-                cursor.style.animation = 'none'
-                const words = document.getElementById('words');
+        // Keep current letter visible in view
+        function keepCurrentLetterInView() {
+            const currentLetter = document.querySelector('.letter.current');
+            if (!currentLetter) return;
 
-                if (!currentLetter.nextSibling) {
-                    gameOver();
-                    return;
-                }
+            const letterTop = currentLetter.getBoundingClientRect().top;
 
-                if (!window.timer && isLetter) {
-                    window.timer = setInterval(() => {
-                        if (!window.gameStart) {
-                            window.gameStart = (new Date()).getTime();
-                        }
-                        const currentTime = (new Date()).getTime();
-                        const msPassed = currentTime - window.gameStart;
-                        const sPassed = Math.round(msPassed / 1000);
-                        document.getElementById("time").innerHTML = `${sPassed + 1}`;
-                    }, 1000);
-                }
-                if (isLetter && currentLetter) {
-                    addClass(currentLetter, key === expectedLetter ? "correct" : "incorrect");
-                    removeClass(currentLetter, "current");
-                    addClass(currentLetter.nextSibling, "current");
-                }
-                if (isBackspace && currentLetter.previousSibling) {
-                    removeClass(currentLetter, "current");
-                    addClass(currentLetter.previousSibling, "current");
-                    removeClass(currentLetter.previousSibling, "correct");
-                    removeClass(currentLetter.previousSibling, "incorrect");
+            if (letterTop > TOP_BORDER) {
+                const currentMargin = parseInt(Elements.words.style.marginTop || '0');
+                Elements.words.style.marginTop = (currentMargin - MOVE_UP) + 'px';
+                updateCursorPosition()
+            }
+        }
 
-                    //also cursor
-                    cursor.style.top = currentLetter.previousSibling.getBoundingClientRect().top + 'px';
-                    cursor.style.left = currentLetter.previousSibling.getBoundingClientRect().left + 'px';
-                }
-                console.log({key, expectedLetter});
+        // Ensure first line is visible at start
+        function alignFirstLineInView() {
+            const currentLetter = document.querySelector('.letter.current');
+            if (!currentLetter) return;
 
-                //move lines up
-                if (currentLetter.getBoundingClientRect().top > 275) {
-                    const margin = parseInt(words.style.marginTop || '0px')
-                    words.style.marginTop = (margin - 55) + 'px';
-                }
+            while (currentLetter.getBoundingClientRect().top > TOP_BORDER) {
+                const margin = parseInt(Elements.words.style.marginTop || '0');
+                Elements.words.style.marginTop = (margin - MOVE_UP) + 'px';
+            }
+        }
 
-                //move cursor
-                if (isLetter) {
-                    cursor.style.top = currentLetter.getBoundingClientRect().top + 'px';
-                    cursor.style.left = currentLetter.getBoundingClientRect().right + 'px';
-                }
-            });
+        // Update cursor position to be after the current letter
+        function updateCursorPosition() {
+            const currentLetter = document.querySelector('.letter.current');
+            if (!currentLetter || !Elements.cursor) return;
 
-            newGame();
-        });
+            Elements.cursor.style.animation = 'none';
+            Elements.cursor.style.top = currentLetter.getBoundingClientRect().top + 'px';
+
+            // Position cursor one letter ahead (at the right edge of current letter)
+            Elements.cursor.style.left = currentLetter.getBoundingClientRect().left + 'px';
+        }
+
+        // Helper function to add a class to an element
+        function addClassToElement(element, className) {
+            if (!element) return;
+            element.classList.add(className);
+        }
+
+        // Helper function to remove a class from an element
+        function removeClassFromElement(element, className) {
+            if (!element) return;
+            element.classList.remove(className);
+        }
+
+        // Initialize the game when DOM is ready
+        document.addEventListener("DOMContentLoaded", initGame);
+
+        // The window.onload function is kept for backward compatibility
+        window.onload = function () {
+            alignFirstLineInView();
+            updateCursorPosition();
+        };
     </script>
 
 </head>
