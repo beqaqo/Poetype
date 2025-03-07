@@ -157,20 +157,15 @@
             display: none;
         }
     </style>
-
     <script>
         // Configuration and state management
         const GameState = {
             timer: null,
-            gameStart: null,
+            startTime: 0,
             isGameOver: false
         };
 
-        // List of modifier keys to ignore
-        const IGNORED_KEYS = ['Shift', 'Control', 'Alt', 'Meta', 'CapsLock', 'Tab', 'Escape', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
-
         const TOP_BORDER = 275;
-        const MOVE_UP = 55;
 
         // DOM element cache
         const Elements = {
@@ -197,23 +192,38 @@
 
         // Reset game to starting state
         function resetGame() {
+            // Clear existing timer
+            if (GameState.timer) {
+                clearInterval(GameState.timer);
+            }
+
             GameState.timer = null;
-            GameState.gameStart = null;
+            GameState.startTime = 0;
             GameState.isGameOver = false;
 
             // Reset UI
             const firstLetter = document.querySelector('.letter');
             if (firstLetter) {
-                addClassToElement(firstLetter, 'current');
-                // Position cursor at the beginning
+                firstLetter.classList.add('current');
+
+                // Restore line alignment functionality
+                alignFirstLineInView();
                 updateCursorPosition();
             }
 
-            // Ensure first line is visible
-            alignFirstLineInView();
-
             // Reset game UI
             Elements.game.classList.remove('over');
+        }
+
+        // Ensure first line is visible at start
+        function alignFirstLineInView() {
+            const currentLetter = document.querySelector('.letter.current');
+            if (!currentLetter) return;
+
+            while (currentLetter.getBoundingClientRect().top > TOP_BORDER) {
+                const currentMargin = parseInt(Elements.words.style.marginTop || '0');
+                Elements.words.style.marginTop = (currentMargin - 55) + 'px';
+            }
         }
 
         // Handle key press events
@@ -221,14 +231,18 @@
             if (GameState.isGameOver) return;
 
             const key = event.key;
-
-            // Ignore modifier keys and special keys
-            if (IGNORED_KEYS.includes(key)) return;
-
             const currentLetter = document.querySelector('.letter.current');
+
+            // Ignore modifier keys
+            if (['Shift', 'Control', 'Alt', 'Meta', 'CapsLock', 'Tab', 'Escape'].includes(key)) return;
 
             // Check if we have a current letter to work with
             if (!currentLetter) return;
+
+            // Start timer on first key press
+            if (!GameState.timer) {
+                startTimer();
+            }
 
             // Check game end condition
             if (!currentLetter.nextSibling) {
@@ -243,50 +257,66 @@
                 handleBackspace(currentLetter);
             }
 
-            // Update UI after key processing
+            // Update UI
             updateCursorPosition();
-            keepCurrentLetterInView();
+            keepCurrentLetterInView(key);
         }
 
         // Handle single letter key presses
         function handleLetterKey(key, currentLetter) {
-            // Start timer on first key press
-            if (!GameState.timer) {
-                startTimer();
-            }
-
             const expectedLetter = currentLetter.innerHTML;
             const isCorrect = key === expectedLetter;
 
             // Mark current letter as correct/incorrect and move to next
-            addClassToElement(currentLetter, isCorrect ? "correct" : "incorrect");
-            removeClassFromElement(currentLetter, "current");
+            currentLetter.classList.add(isCorrect ? "correct" : "incorrect");
+            currentLetter.classList.remove("current");
 
             if (currentLetter.nextSibling) {
-                addClassToElement(currentLetter.nextSibling, "current");
+                currentLetter.nextSibling.classList.add("current");
             }
         }
 
         // Handle backspace key press
         function handleBackspace(currentLetter) {
             if (!currentLetter.previousSibling) return;
-            if (currentLetter.previousSibling.getBoundingClientRect().top !== currentLetter.getBoundingClientRect().top) return; //there may be more efficient way to do that
+
+            // Check if previous letter is on the same line
+            const currentRect = currentLetter.getBoundingClientRect();
+            const prevRect = currentLetter.previousSibling.getBoundingClientRect();
+            if (currentRect.top !== prevRect.top) return;
 
             // Move back to previous letter
-            removeClassFromElement(currentLetter, "current");
+            currentLetter.classList.remove("current");
             const previousLetter = currentLetter.previousSibling;
-            addClassToElement(previousLetter, "current");
+            previousLetter.classList.add("current");
 
             // Reset letter state
-            removeClassFromElement(previousLetter, "correct");
-            removeClassFromElement(previousLetter, "incorrect");
+            previousLetter.classList.remove("correct");
+            previousLetter.classList.remove("incorrect");
+        }
+
+        // Keep current letter visible in view
+        function keepCurrentLetterInView(key) {
+            const currentLetter = document.querySelector('.letter.current');
+            if (!currentLetter) return;
+
+            const currentRect = currentLetter.getBoundingClientRect();
+            const prevRect = currentLetter.previousSibling
+                ? currentLetter.previousSibling.getBoundingClientRect()
+                : currentRect;
+
+            if (currentRect.top !== prevRect.top && key !== 'Backspace') {
+                const currentMargin = parseInt(Elements.words.style.marginTop || '0');
+                Elements.words.style.marginTop = (currentMargin - (currentRect.top - prevRect.top)) + 'px';
+                updateCursorPosition();
+            }
         }
 
         // Start the game timer
         function startTimer() {
-            GameState.gameStart = Date.now();
+            GameState.startTime = Date.now();
             GameState.timer = setInterval(() => {
-                const secondsPassed = Math.round((Date.now() - GameState.gameStart) / 1000);
+                const secondsPassed = Math.round((Date.now() - GameState.startTime) / 1000);
                 Elements.time.textContent = `${secondsPassed + 1}`;
             }, 1000);
         }
@@ -297,73 +327,31 @@
 
             GameState.isGameOver = true;
             clearInterval(GameState.timer);
-            addClassToElement(Elements.game, 'over');
+            Elements.game.classList.add('over');
 
             // Display WPM score
-            const wpm = calculateWPM();
+            const count = parseInt(Elements.words.dataset.count) || 0;
+            const time = parseFloat(Elements.time.textContent) || 1;
+            const wpm = Math.round((count / time) * 60);
             Elements.time.innerHTML = `წუთში ${wpm} სიტყვა`;
         }
 
-        // Calculate words per minute
-        function calculateWPM() {
-            const count = parseInt(Elements.words.dataset.count) || 0;
-            const time = parseFloat(Elements.time.textContent.replace(/[^0-9.]/g, '')) || 1;
-            return Math.round((count / time) * 60);
-        }
-
-        // Keep current letter visible in view
-        function keepCurrentLetterInView() {
-            const currentLetter = document.querySelector('.letter.current');
-            if (!currentLetter) return;
-
-            const letterTop = currentLetter.getBoundingClientRect().top;
-
-            if (letterTop > TOP_BORDER) {
-                const currentMargin = parseInt(Elements.words.style.marginTop || '0');
-                Elements.words.style.marginTop = (currentMargin - MOVE_UP) + 'px';
-                updateCursorPosition()
-            }
-        }
-
-        // Ensure first line is visible at start
-        function alignFirstLineInView() {
-            const currentLetter = document.querySelector('.letter.current');
-            if (!currentLetter) return;
-
-            while (currentLetter.getBoundingClientRect().top > TOP_BORDER) {
-                const margin = parseInt(Elements.words.style.marginTop || '0');
-                Elements.words.style.marginTop = (margin - MOVE_UP) + 'px';
-            }
-        }
-
-        // Update cursor position to be after the current letter
+        // Update cursor position
         function updateCursorPosition() {
             const currentLetter = document.querySelector('.letter.current');
             if (!currentLetter || !Elements.cursor) return;
 
             Elements.cursor.style.animation = 'none';
-            Elements.cursor.style.top = currentLetter.getBoundingClientRect().top + 'px';
 
-            // Position cursor one letter ahead (at the right edge of current letter)
-            Elements.cursor.style.left = currentLetter.getBoundingClientRect().left + 'px';
-        }
-
-        // Helper function to add a class to an element
-        function addClassToElement(element, className) {
-            if (!element) return;
-            element.classList.add(className);
-        }
-
-        // Helper function to remove a class from an element
-        function removeClassFromElement(element, className) {
-            if (!element) return;
-            element.classList.remove(className);
+            const rect = currentLetter.getBoundingClientRect();
+            Elements.cursor.style.top = `${rect.top}px`;
+            Elements.cursor.style.left = `${rect.left}px`;
         }
 
         // Initialize the game when DOM is ready
-        document.addEventListener("DOMContentLoaded", initGame);
+        document.addEventListener('DOMContentLoaded', initGame);
 
-        // The window.onload function is kept for backward compatibility
+        // Ensure first line is aligned on load
         window.onload = function () {
             alignFirstLineInView();
             updateCursorPosition();
