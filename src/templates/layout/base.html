@@ -46,17 +46,28 @@
         }
 
         .font-xl {
-            font-size: 3.2rem;
-            font-weight: bold;
+            font-size: clamp(2rem, 5vw, 3.2rem);
+            font-weight: bolder;
         }
 
         .font-l {
-            font-size: 2.5rem;
-            font-weight: bold;
+            font-size: clamp(1.6rem, 3vw, 2.3rem);
+            font-weight: lighter;
         }
 
         .font-m {
-            font-size: 1.8rem;
+            font-size: clamp(1.4rem, 3vw, 1.8rem);
+            font-weight: bolder;
+        }
+
+        .font-logo {
+            font-size: clamp(1.8rem, 4vw, 2.5rem);
+            font-weight: bold;
+        }
+
+        .font-modal{
+            font-size: clamp(1.4rem, 3vw, 1.8rem);
+            font-weight: bold;
         }
 
         /* === LETTER STYLING === */
@@ -68,12 +79,28 @@
             color: var(--font-color-highlight);
         }
 
+        .text-center {
+            max-width: 90%;
+            margin: auto;
+        }
+
+        button, a {
+            padding: 10px 15px;
+            font-size: 1.2rem;
+        }
+
+        #scale-wrapper {
+            transform-origin: top center;
+            transition: transform 0.2s ease-out;
+        }
+
         /* === GAME AREA === */
         #game {
             font-size: 2rem;
-            white-space: pre;
+            white-space: pre-wrap;
             line-height: 55px;
             height: 220px;
+            min-height: 150px;
             overflow: hidden;
             position: relative;
         }
@@ -84,7 +111,7 @@
 
         /* === WORD STYLING === */
         #words {
-            filter: blur(4px);
+            filter: blur(6px);
             color: var(--font-color-faded);
         }
 
@@ -113,6 +140,7 @@
         /* === TIMER STYLING === */
         #game:focus #time {
             display: none;
+            transform-origin: bottom center;
         }
 
         /* === BUTTON STYLING === */
@@ -125,6 +153,7 @@
         /* === MODAL STYLING === */
         .modal-content {
             background-color: var(--background-color);
+            max-width: 95%;
         }
 
         /* === BLINKING CURSOR === */
@@ -158,6 +187,17 @@
         }
     </style>
     <script>
+        // scale the window
+        /*
+        function scaleContent() {
+            let scale = Math.min(window.innerWidth / (1920/1.5), window.innerHeight / (1080/1.5));
+            document.getElementById("scale-wrapper").style.transform = `scale(${scale})`;
+        }
+
+        window.addEventListener("resize", scaleContent);
+        window.addEventListener("load", scaleContent);
+         */
+
         // Configuration and state management
         const GameState = {
             timer: null,
@@ -362,9 +402,11 @@
 <body class="background">
 <div>
     {% include 'layout/navbar.html' %}
-    {% block body %}
-    {% endblock %}
-    {% include 'layout/footer.html' %}
+    <div id="scale-wrapper">
+        {% block body %}
+        {% endblock %}
+        {% include 'layout/footer.html' %}
+    </div>
 </div>
 <div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"

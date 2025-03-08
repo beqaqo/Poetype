@@ -23,7 +23,7 @@ def format_list(model):
         poem_id = model.id
         author_id = model.author_id
 
-    return f'<li class=""><a class="navbar-brand font-geo font-m font-color" href="/{author_id}/{poem_id}">{model.name}</a></li>'
+    return f'<li class=""><a class="navbar-brand font-geo font-modal font-color-faded" href="/{author_id}/{poem_id}">{model.name}</a></li>'
 
 
 def format_text(poem_text):
