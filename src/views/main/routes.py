@@ -57,6 +57,13 @@ def index(author_id, poem_id):
 
     authors = "".join(format_list(author) for author in Author.query.all())
     poems = "".join(format_list(poem) for poem in poems_obj)
+
+    if not author_obj or not poem_obj:
+        return "Author or poem not found", 404
+
+    if int(poem_obj.author_id) != int(author_id):
+        return index(1, 1)
+
     formatted_poem = format_text(poem_obj.verse)
     word_count = len(poem_obj.verse.split())
 
