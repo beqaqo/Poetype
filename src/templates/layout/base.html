@@ -7,6 +7,7 @@
           integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 
     <link rel="stylesheet" href="../../static/css/bpg-glaho-web.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <title>
         {% block title %}
         Poetype
@@ -65,7 +66,7 @@
             font-weight: bold;
         }
 
-        .font-modal{
+        .font-modal {
             font-size: clamp(1.4rem, 3vw, 1.8rem);
             font-weight: bold;
         }
@@ -169,7 +170,7 @@
         #cursor {
             display: none;
             width: 4px;
-            height: 2.2rem;
+            height: 2.7rem;
             background-color: var(--font-color);
             position: fixed;
             top: 1px;
@@ -184,6 +185,25 @@
 
         #game.over:focus #cursor {
             display: none;
+        }
+
+        .github-link {
+            display: inline-flex;
+            align-items: center;
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+
+        .github-link:hover {
+            color: #9e413f; /* Highlight color */
+        }
+
+        .github-icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 8px;
         }
     </style>
     <script>
