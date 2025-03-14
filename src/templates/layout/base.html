@@ -306,8 +306,7 @@
             }
 
             // Check game end condition
-            if (!currentLetter.nextSibling) {
-                endGame();
+            if (handleLastLetter(currentLetter)) {
                 return;
             }
 
@@ -316,17 +315,18 @@
                 handleLetterKey(key, currentLetter);
                 // If we just typed a space and the next character is also a space, skip it
                 currentLetter = document.querySelector('.letter.current');
+                if (handleLastLetter(currentLetter)) {
+                    return;
+                }
                 if (currentLetter.textContent.trim() === '' && currentLetter.previousSibling.textContent.trim() === '') {
                     moveClassRight(currentLetter);
                     keepCurrentLetterInView(currentLetter);
                 }
-                if (IGNORED_SIMBOLS.includes(currentLetter.textContent)) {
+                while (IGNORED_SIMBOLS.includes(currentLetter.textContent)) {
                     currentLetter.classList.add("correct");
                     moveClassRight(currentLetter);
-                    if (!currentLetter.nextSibling) {
-                        endGame();
-                        return;
-                    }
+                    currentLetter = document.querySelector('.letter.current');
+                    handleLastLetter(currentLetter);
                 }
             } else if (key === 'Backspace') {
                 handleBackspace(currentLetter);
@@ -376,6 +376,13 @@
 
             // Move back to previous letter
             moveClassLeft(currentLetter);
+        }
+
+        function handleLastLetter(currentLetter) {
+            if (!currentLetter.nextSibling) {
+                endGame();
+                return true;
+            }
         }
 
         // Keep current letter visible in view
