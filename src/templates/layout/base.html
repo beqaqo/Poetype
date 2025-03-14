@@ -176,7 +176,7 @@
             top: 1px;
             left: 1px;
             animation: blink .5s infinite;
-            transition: top 0.1s ease-out, left 0.1s ease-out;
+            transition: top 0.07s ease-out, left 0.07s ease-out;
         }
 
         #game:focus #cursor {
@@ -226,6 +226,7 @@
         };
 
         const TOP_BORDER = 275;
+        const IGNORED_SIMBOLS = [',', '„' , '”', '"', '-', '_', '.', '!', '?', ':', ';', '(', ')', '[', ']', '{', '}'];
 
         // DOM element cache
         const Elements = {
@@ -291,7 +292,7 @@
             if (GameState.isGameOver) return;
 
             const key = event.key;
-            const currentLetter = document.querySelector('.letter.current');
+            let currentLetter = document.querySelector('.letter.current');
 
             // Ignore modifier keys
             if (['Shift', 'Control', 'Alt', 'Meta', 'CapsLock', 'Tab', 'Escape'].includes(key)) return;
@@ -313,6 +314,16 @@
             // Handle different key types
             if (key.length === 1) {
                 handleLetterKey(key, currentLetter);
+                // If we just typed a space and the next character is also a space, skip it
+                currentLetter = document.querySelector('.letter.current');
+                if (currentLetter.textContent.trim() === '' && currentLetter.previousSibling.textContent.trim() === '') {
+                    moveClassRight(currentLetter);
+                    keepCurrentLetterInView(currentLetter);
+                }
+                if (IGNORED_SIMBOLS.includes(currentLetter.textContent)) {
+                    currentLetter.classList.add("correct");
+                    moveClassRight(currentLetter);
+                }
             } else if (key === 'Backspace') {
                 handleBackspace(currentLetter);
             }
@@ -329,11 +340,25 @@
 
             // Mark current letter as correct/incorrect and move to next
             currentLetter.classList.add(isCorrect ? "correct" : "incorrect");
+            moveClassRight(currentLetter)
+        }
+
+        function moveClassRight(currentLetter) {
             currentLetter.classList.remove("current");
 
             if (currentLetter.nextSibling) {
                 currentLetter.nextSibling.classList.add("current");
             }
+        }
+
+        function moveClassLeft(currentLetter) {
+            currentLetter.classList.remove("current");
+            const previousLetter = currentLetter.previousSibling;
+            previousLetter.classList.add("current");
+
+            // Reset letter state
+            previousLetter.classList.remove("correct");
+            previousLetter.classList.remove("incorrect");
         }
 
         // Handle backspace key press
@@ -346,13 +371,7 @@
             if (currentRect.top !== prevRect.top) return;
 
             // Move back to previous letter
-            currentLetter.classList.remove("current");
-            const previousLetter = currentLetter.previousSibling;
-            previousLetter.classList.add("current");
-
-            // Reset letter state
-            previousLetter.classList.remove("correct");
-            previousLetter.classList.remove("incorrect");
+            moveClassLeft(currentLetter);
         }
 
         // Keep current letter visible in view
