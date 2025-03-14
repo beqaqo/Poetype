@@ -226,7 +226,7 @@
         };
 
         const TOP_BORDER = 275;
-        const IGNORED_SIMBOLS = [',', '„' , '”', '"', '-', '_', '.', '!', '?', ':', ';', '(', ')', '[', ']', '{', '}'];
+        const IGNORED_SIMBOLS = [',', '„', '”', '"', '-', '_', '.', '!', '?', ':', ';', '(', ')', '[', ']', '{', '}'];
 
         // DOM element cache
         const Elements = {
@@ -323,6 +323,10 @@
                 if (IGNORED_SIMBOLS.includes(currentLetter.textContent)) {
                     currentLetter.classList.add("correct");
                     moveClassRight(currentLetter);
+                    if (!currentLetter.nextSibling) {
+                        endGame();
+                        return;
+                    }
                 }
             } else if (key === 'Backspace') {
                 handleBackspace(currentLetter);
