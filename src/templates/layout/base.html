@@ -329,7 +329,7 @@
                     handleLastLetter(currentLetter);
                 }
             } else if (key === 'Backspace') {
-                handleBackspace(currentLetter);
+                handleBackspace(currentLetter, event);
             }
 
             // Update UI
@@ -365,17 +365,41 @@
             previousLetter.classList.remove("incorrect");
         }
 
-        // Handle backspace key press
-        function handleBackspace(currentLetter) {
-            if (!currentLetter.previousSibling) return;
+        // // Handle backspace key press
+        // function handleBackspace(currentLetter) {
+        //     if (!currentLetter.previousSibling) return;
+        //
+        //     // Check if previous letter is on the same line
+        //     const currentRect = currentLetter.getBoundingClientRect();
+        //     const prevRect = currentLetter.previousSibling.getBoundingClientRect();
+        //     if (currentRect.top !== prevRect.top) return;
+        //
+        //     // Move back to previous letter
+        //     moveClassLeft(currentLetter);
+        // }
 
+        function handleBackspace(currentLetter, event) {
+            if (!currentLetter.previousSibling) return;
             // Check if previous letter is on the same line
             const currentRect = currentLetter.getBoundingClientRect();
             const prevRect = currentLetter.previousSibling.getBoundingClientRect();
             if (currentRect.top !== prevRect.top) return;
 
-            // Move back to previous letter
-            moveClassLeft(currentLetter);
+            if (event.ctrlKey) {
+                if (currentLetter.previousSibling.textContent.trim() === '') {
+                    moveClassLeft(currentLetter);
+                    currentLetter = document.querySelector('.letter.current');
+                }
+                // Move left until we reach a space or the start of the text
+                while (currentLetter.previousSibling && currentLetter.previousSibling.textContent.trim() !== '') {
+                    moveClassLeft(currentLetter);
+                    currentLetter = document.querySelector('.letter.current');
+                }
+
+            } else {
+                // Normal Backspace (move one character back)
+                moveClassLeft(currentLetter);
+            }
         }
 
         function handleLastLetter(currentLetter) {
