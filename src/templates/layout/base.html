@@ -398,6 +398,10 @@
 
             } else {
                 // Normal Backspace (move one character back)
+                while (IGNORED_SIMBOLS.includes(currentLetter.previousSibling.textContent)) {
+                    moveClassLeft(currentLetter);
+                    currentLetter = document.querySelector('.letter.current');
+                }
                 moveClassLeft(currentLetter);
             }
         }
