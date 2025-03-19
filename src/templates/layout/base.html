@@ -451,7 +451,7 @@
             const count = parseInt(Elements.words.dataset.count) || 0;
             const time = parseFloat(Elements.time.textContent) || 1;
             const wpm = Math.round((count / time) * 60);
-            Elements.time.innerHTML = `წუთში ${wpm} სიტყვა`;
+            Elements.time.innerHTML = `<span class="font-color">წუთში</span> ${wpm} <span class="font-color">სიტყვა</span>`;
         }
 
         // Update cursor position
