@@ -11,10 +11,12 @@ Poetype
     <div class="modal fade" id="authorModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
-                <div class="modal-body p-2">  <!-- Added modal-body -->
-                    <ul class="list-group">
-                        {{authors | safe}}
-                    </ul>
+                <div class="modal-body">
+                    <div class="modal-body-scroll">
+                        <ul class="list-group">
+                            {{authors | safe}}
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
@@ -26,10 +28,14 @@ Poetype
     </div>
     <div class="modal fade" id="poemModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-            <div class="modal-content p-2">
-                <ul class="list-group">
-                    {{poems | safe}}
-                </ul>
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="modal-body-scroll">
+                        <ul class="list-group">
+                            {{poems | safe}}
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

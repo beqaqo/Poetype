@@ -157,6 +157,27 @@
             max-width: 95%;
         }
 
+        /* Hide scrollbars but keep scrolling functionality */
+        .modal-body-scroll {
+            max-height: 300px;
+            overflow-y: scroll;
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* Internet Explorer 10+ */
+        }
+
+        .modal-body-scroll::-webkit-scrollbar {
+            display: none; /* WebKit */
+        }
+
+        /* Make poem name and author responsive */
+        #poem, #author {
+            display: inline-block;
+            max-width: 100%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
         /* === BLINKING CURSOR === */
         @keyframes blink {
             0%, 100% {
@@ -226,7 +247,7 @@
         };
 
         const TOP_BORDER = 275;
-        const IGNORED_SIMBOLS = [',', '„', '”', '"', '-', '_', '—', '.', '!', '?', ':', ';', '(', ')', '[', ']', '{', '}'];
+        const IGNORED_SIMBOLS = [',', '„', '”', '“', '"', '-', '_', '—', '.', '!', '?', ':', ';', '(', ')', '[', ']', '{', '}', '*'];
 
         // DOM element cache
         const Elements = {
