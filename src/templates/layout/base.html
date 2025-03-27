@@ -226,7 +226,7 @@
         };
 
         const TOP_BORDER = 275;
-        const IGNORED_SIMBOLS = [',', '„', '”', '"', '-', '_', '.', '!', '?', ':', ';', '(', ')', '[', ']', '{', '}'];
+        const IGNORED_SIMBOLS = [',', '„', '”', '"', '-', '_', '—', '.', '!', '?', ':', ';', '(', ')', '[', ']', '{', '}'];
 
         // DOM element cache
         const Elements = {
@@ -318,8 +318,9 @@
                 if (handleLastLetter(currentLetter)) {
                     return;
                 }
-                if (currentLetter.textContent.trim() === '' && currentLetter.previousSibling.textContent.trim() === '') {
+                while (currentLetter.textContent.trim() === '' && currentLetter.previousSibling.textContent.trim() === '') {
                     moveClassRight(currentLetter);
+                    currentLetter = document.querySelector('.letter.current');
                     keepCurrentLetterInView(currentLetter);
                 }
                 while (IGNORED_SIMBOLS.includes(currentLetter.textContent)) {
