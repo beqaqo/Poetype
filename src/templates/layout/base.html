@@ -151,22 +151,36 @@
             box-shadow: none !important;
         }
 
-        /* === MODAL STYLING === */
+        /*=== MODAL STYLING === */
         .modal-content {
             background-color: var(--background-color);
-            max-width: 95%;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .modal-dialog {
+            max-width: 600px;
         }
 
         /* Hide scrollbars but keep scrolling functionality */
-        .modal-body-scroll {
-            max-height: 300px;
-            overflow-y: scroll;
-            scrollbar-width: none; /* Firefox */
-            -ms-overflow-style: none; /* Internet Explorer 10+ */
+        /* Scrollbar customization to match modal design */
+        .modal-body-scroll::-webkit-scrollbar {
+            width: 4px; /* Thinner scrollbar */
         }
 
-        .modal-body-scroll::-webkit-scrollbar {
-            display: none; /* WebKit */
+        .modal-body-scroll::-webkit-scrollbar-track {
+            background: var(--background-color); /* Match background color */
+        }
+
+        .modal-body-scroll::-webkit-scrollbar-thumb {
+            background-color: var(--font-color-faded); /* Use faded font color */
+            border-radius: 2px;
+        }
+
+        .modal-body-scroll {
+            max-height: 390px;
+            overflow-y: auto;
+            overflow-x: hidden;
         }
 
         /* Make poem name and author responsive */
@@ -306,6 +320,12 @@
                 const currentMargin = parseInt(Elements.words.style.marginTop || '0');
                 Elements.words.style.marginTop = (currentMargin - 55) + 'px';
             }
+
+            while (currentLetter.getBoundingClientRect().top < TOP_BORDER - 10) {
+                const currentMargin = parseInt(Elements.words.style.marginTop || '0');
+                Elements.words.style.marginTop = (currentMargin + 55) + 'px';
+            }
+            updateCursorPosition();
         }
 
         // Handle key press events
@@ -386,19 +406,6 @@
             previousLetter.classList.remove("correct");
             previousLetter.classList.remove("incorrect");
         }
-
-        // // Handle backspace key press
-        // function handleBackspace(currentLetter) {
-        //     if (!currentLetter.previousSibling) return;
-        //
-        //     // Check if previous letter is on the same line
-        //     const currentRect = currentLetter.getBoundingClientRect();
-        //     const prevRect = currentLetter.previousSibling.getBoundingClientRect();
-        //     if (currentRect.top !== prevRect.top) return;
-        //
-        //     // Move back to previous letter
-        //     moveClassLeft(currentLetter);
-        // }
 
         function handleBackspace(currentLetter, event) {
             if (!currentLetter.previousSibling) return;
