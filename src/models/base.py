@@ -1,14 +1,25 @@
+from datetime import datetime
 from src.ext import db
 
-class BaseModel:
-    def create(self, commit=True):
+class BaseModel(db.Model):
+    __abstract__ = True
+    
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    def save(self):
         db.session.add(self)
-        if commit:
-            self.save()
-
+        db.session.commit()
+        return self
+    
     def delete(self):
         db.session.delete(self)
-        self.save()
-
-    def save(self):
         db.session.commit()
+    
+    @classmethod
+    def get_by_id(cls, id):
+        return cls.query.get(id)
+    
+    @classmethod
+    def get_all(cls):
+        return cls.query.all()

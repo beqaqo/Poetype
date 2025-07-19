@@ -1,7 +1,7 @@
 from src.ext import db
 from src.models.base import BaseModel
 
-class Poem(db.Model, BaseModel):
+class Poem(BaseModel):
     __tablename__ = 'poem'
 
     id = db.Column(db.Integer, primary_key=True)

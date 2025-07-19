@@ -1,7 +1,7 @@
 from src.ext import db
 from src.models.base import BaseModel
 
-class Author(db.Model, BaseModel):
+class Author(BaseModel):
     __tablename__ = 'author'
 
     id = db.Column(db.Integer, primary_key=True)

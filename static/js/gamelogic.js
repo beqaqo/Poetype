@@ -1,9 +1,11 @@
 // Configuration and state management
-const GameState = {
-    timer: null,
-    startTime: 0,
-    isGameOver: false
-};
+class GameState {
+    constructor() {
+        this.timer = null;
+        this.startTime = 0;
+        this.isGameOver = false;
+    }
+}
 
 const TOP_BORDER = 275;
 const IGNORED_SIMBOLS = [',', '„', '”', '“', '"', '-', '_', '—', '.', '!', '?', ':', ';', '(', ')', '[', ']', '{', '}', '*'];
