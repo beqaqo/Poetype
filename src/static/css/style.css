@@ -1,0 +1,235 @@
+/* === ROOT VARIABLES === */
+:root {
+    --font-color: #414141;
+    --font-color-faded: #777777;
+    --font-color-highlight: #9e413f;
+    --background-color: #d9d9d9;
+}
+
+/* === GLOBAL STYLES === */
+body {
+    background-color: var(--background-color);
+    font-family: "Roboto", sans-serif;
+}
+
+/* === TYPOGRAPHY === */
+.font-color {
+    color: var(--font-color);
+}
+
+.font-color-faded {
+    color: var(--font-color-faded);
+}
+
+.highlight {
+    color: var(--font-color-highlight);
+}
+
+.font-geo {
+    font-family: "BPG Glaho WEB", sans-serif;
+}
+
+.font-xl {
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: bolder;
+}
+
+.font-l {
+    font-size: clamp(1.6rem, 3vw, 2.3rem);
+    font-weight: lighter;
+}
+
+.font-m {
+    font-size: clamp(1.4rem, 3vw, 1.8rem);
+    font-weight: bolder;
+}
+
+.font-logo {
+    font-size: clamp(1.8rem, 4vw, 2.5rem);
+    font-weight: bold;
+}
+
+.font-modal {
+    font-size: clamp(1.4rem, 3vw, 1.8rem);
+    font-weight: bold;
+}
+
+/* === LETTER STYLING === */
+.letter.correct {
+    color: var(--font-color);
+}
+
+.letter.incorrect {
+    color: var(--font-color-highlight);
+}
+
+.text-center {
+    max-width: 90%;
+    margin: auto;
+}
+
+button, a {
+    padding: 10px 15px;
+    font-size: 1.2rem;
+}
+
+#scale-wrapper {
+    transform-origin: top center;
+    transition: transform 0.2s ease-out;
+}
+
+/* === GAME AREA === */
+#game {
+    font-size: 2rem;
+    white-space: pre-wrap;
+    line-height: 55px;
+    height: 225px;
+    min-height: 150px;
+    overflow: hidden;
+    position: relative;
+}
+
+#game:focus {
+    outline: 0;
+}
+
+/* === WORD STYLING === */
+#words {
+    filter: blur(6px);
+    color: var(--font-color-faded);
+}
+
+#game:focus #words,
+#game.over #words {
+    filter: blur(0px);
+}
+
+#game.over #words {
+    opacity: 0.5;
+}
+
+/* === GAME STATUS MESSAGE === */
+#focus-error {
+    position: absolute;
+    inset: 0;
+    text-align: center;
+    padding-top: 75px;
+}
+
+#game:focus #focus-error,
+#game.over #focus-error {
+    display: none;
+}
+
+/* === TIMER STYLING === */
+#game:focus #time {
+    display: none;
+    transform-origin: bottom center;
+}
+
+/* === BUTTON STYLING === */
+button:focus,
+button:active {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+/*=== MODAL STYLING === */
+.modal-content {
+    background-color: var(--background-color);
+    outline: none !important;
+    box-shadow:none !important;
+    max-width: 800px;
+    width: 100%;
+}
+
+.modal-dialog {
+    max-width: 900px;
+}
+
+/* Hide scrollbars but keep scrolling functionality */
+/* Scrollbar customization to match modal design */
+.modal-body-scroll::-webkit-scrollbar {
+    width: 4px; /* Thinner scrollbar */
+}
+
+.modal-body-scroll::-webkit-scrollbar-track {
+    background: var(--background-color); /* Match background color */
+}
+
+.modal-body-scroll::-webkit-scrollbar-thumb {
+    background-color: var(--font-color-faded); /* Use faded font color */
+    border-radius: 2px;
+}
+
+.modal-body-scroll{
+    max-height: 60vh; /* Increase height */
+    padding: 0.5rem;  /* Adjust padding */
+    overflow-y: auto;
+    overflow-x: hidden;
+    box-sizing: border-box;
+}
+.modal-body{
+    padding: 0; /* or your preferred padding */
+    overflow: visible;
+    max-height: none;
+    box-sizing: border-box;
+}
+
+/* Make poem name and author responsive */
+#poem, #author {
+    display: inline-block;
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* === BLINKING CURSOR === */
+@keyframes blink {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0;
+    }
+}
+
+#cursor {
+    display: none;
+    width: 4px;
+    height: 2.7rem;
+    background-color: var(--font-color);
+    position: fixed;
+    top: 1px;
+    left: 1px;
+    animation: blink .5s infinite;
+    transition: top 0.07s ease-out, left 0.07s ease-out;
+}
+
+#game:focus #cursor {
+    display: block;
+}
+
+#game.over:focus #cursor {
+    display: none;
+}
+
+.github-link {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+.github-link:hover {
+    color: #9e413f; /* Highlight color */
+}
+
+.github-icon {
+    width: 20px;
+    height: 20px;
+    margin-right: 8px;
+}
